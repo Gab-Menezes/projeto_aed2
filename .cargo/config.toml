@@ -1,0 +1,5 @@
+[build]
+rustflags = ["--cfg", "tokio_unstable"]
+
+[profile.dev]
+opt-level = 0
