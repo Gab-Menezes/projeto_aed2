@@ -15,16 +15,11 @@ TODO
   | |_<video 2 parts ...>
   |_...
 ```
-# Generate **parts.list** and each video part
-This probably will be automated
-1. Create a folder inside with the video name inside `<videos folder>`
-2. Copy the video file to this folder
-3. `cd` into the folder
-4. To generate **parts.list** and each part, run: 
-    * For **yuv** files: `time ffmpeg -i <video name> -an -map 0 -segment_time <segment time> -f segment -segment_list parts.list part%03d.yuv`
-    * For **rgb** files: `time ffmpeg -i <video name> -an -pix_fmt rgb8 -map 0 -segment_time <segment time> -f segment -segment_list parts.list part%03d.rgb`
-5. To compress this parts, run:
-    * `time find . -type f -name 'part*.<yuv|rgb>' | parallel -j $(nproc) gzip -v -k {}`
+# Ingesting video files
+1. Install the required dependencies: `sudo apt install -y parallel ffmpeg zstd`
+2. Run: `./ingest.sh "<videos folder>" "<video>" <yuv|rgb> <segment time> <zstd|gzip|xz|lzma|lz4> <compression level>`
+	* Segment time: Time in seconds of each segment (usually between 2-10)
+	* Compression level: Compression level used by zstd (between 1-19)
 
 # How to run
 Right now the client will ask for a random video, but in the future this will change
