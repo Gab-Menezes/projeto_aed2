@@ -12,12 +12,29 @@ pub fn len_to_num_of_chunks(len: u64) -> u64 {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub enum Compression {
+    GZIP,
+    LZMA,
+    ZSTD,
+    XZ,
+    LZ4
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct VideoInfo {
+    pub width: u32,
+    pub height: u32,
+    pub fps: f32,
+    pub compression: Compression,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Message {
     GetVideos,
     Videos(Vec<String>),
 
     GetVideoParts(String),
-    VideoParts((Vec<(String, u64)>, u64)),
+    VideoParts((VideoInfo, Vec<(String, u64)>, u64)),
 
     GetVideoPart((String, String)),
     VideoPart(Vec<u8>),
@@ -70,7 +87,10 @@ impl Message {
             parts.push((file_name.to_string(), num_chunks));
             biggest_num_chunks = std::cmp::max(biggest_num_chunks, num_chunks);
         }
-        Ok(Message::VideoParts((parts, biggest_num_chunks)))
+
+        let buf = tokio::fs::read(video_path.join("info.json")).await?;
+        let info: VideoInfo = serde_json::from_slice(&buf).unwrap();
+        Ok(Message::VideoParts((info, parts, biggest_num_chunks)))
     }
 
     async fn get_video_part(args: &ServerArgs, video: String, part: String) -> io::Result<Message> {

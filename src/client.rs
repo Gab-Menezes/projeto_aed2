@@ -3,7 +3,7 @@ use rand::seq::SliceRandom;
 use std::net::SocketAddr;
 use std::{io, net::UdpSocket};
 use udp_compression::client_handler::send_recv;
-use udp_compression::Message;
+use udp_compression::{Message, VideoInfo};
 use udp_compression::{send_client, MAX_CHUNK_LEN};
 
 fn main() -> io::Result<()> {
@@ -20,13 +20,14 @@ fn main() -> io::Result<()> {
     let video = videos.choose(&mut rng).unwrap().clone();
     tracing::debug!("Choosen video {video}");
 
-    let (parts, biggest_number_chunks) = send_client!(
+    let (info, parts, biggest_number_chunks) = send_client!(
         sock,
         server_addrs,
         buf,
         Message::GetVideoParts(video.clone()),
         Message::VideoParts
     );
+
     let mut part_buffer = vec![0u8; biggest_number_chunks as usize * MAX_CHUNK_LEN];
     let mut total_bytes = 0;
     let num_parts = parts.len();
