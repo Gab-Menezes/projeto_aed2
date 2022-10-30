@@ -9,17 +9,25 @@ set style fill solid
 set boxwidth 0.9
 
 set xtics format ""
-scale = 10**pow
-tick_scale = 10**(pow-1)
+scale = (10**pow)*y_mult
+tick_scale = (10**(pow-1))*y_mult
 set yrange [0:scale]
 set ylabel y_label
 set ylabel offset 1
 set ytics .5*tick_scale
 set grid ytics
 
+set border 3
+set tics nomirror
+
 set key box
 set key width 1 height 1
 
 set title graph_title
+
+x_off = .17
+y_off = scale/50.0
 plot filename using ($2/conversion_scale):xtic(1) title "GZ" linecolor rgb red, \
-    filename using ($3/conversion_scale) title "XZ" linecolor rgb blue
+    ""  using ($0 - x_off):(($2/conversion_scale) + y_off):(sprintf("%3.1f",$2/conversion_scale)) with labels notitle, \
+    filename using ($3/conversion_scale) title "XZ" linecolor rgb blue, \
+    ""  using ($0 + x_off):(($3/conversion_scale) + y_off):(sprintf("%3.1f",$3/conversion_scale)) with labels notitle
