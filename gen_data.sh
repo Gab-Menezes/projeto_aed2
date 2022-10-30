@@ -51,7 +51,7 @@ then
 fi
 
 cwd=$(pwd)
-number_of_runs=1
+number_of_runs=5
 
 #some utility vars
 video_file_with_extension=$(echo $video_path | rev | cut -f 1 -d '/' | rev)
