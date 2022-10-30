@@ -1,5 +1,8 @@
 use bincode::Options;
+use flate2::bufread::GzDecoder;
 use rand::seq::SliceRandom;
+use xz2::bufread::XzDecoder;
+use std::io::Read;
 use std::net::SocketAddr;
 use std::{io, net::UdpSocket};
 use udp_compression::client_handler::send_recv;
@@ -20,7 +23,7 @@ fn main() -> io::Result<()> {
     let video = videos.choose(&mut rng).unwrap().clone();
     tracing::debug!("Choosen video {video}");
 
-    let (info, parts, biggest_number_chunks) = send_client!(
+    let (video_info, parts, biggest_number_chunks) = send_client!(
         sock,
         server_addrs,
         buf,
@@ -56,6 +59,27 @@ fn main() -> io::Result<()> {
             sock.send_to("ack".as_bytes(), addr).unwrap();
         }
         tracing::debug!("End stream of part {part} from video {video} ({total_part_bytes} bytes in {num_chunks} chunks) in {:?}", begin_part_time.elapsed());
+        
+        let part_slice = &part_buffer[..total_part_bytes];
+        let mut decompressed_size = 0;
+        tracing::info!("Decompressing {part}");
+        match video_info.compression {
+            udp_compression::Compression::GZIP => {
+                let mut gz = GzDecoder::new(part_slice);
+                let mut decompression_buffer = Vec::new();
+                decompressed_size = gz.read_to_end(&mut decompression_buffer)?;
+            },
+            udp_compression::Compression::XZ => {
+                let mut xz = XzDecoder::new(part_slice);
+                let mut decompression_buffer = Vec::new();
+                decompressed_size = xz.read_to_end(&mut decompression_buffer)?;
+            }
+            _ => {
+                tracing::error!("Compression method not implemented");
+                panic!();
+            }
+        }
+        tracing::info!("Decompressed {part} to {decompressed_size} bytes");
     }
     tracing::debug!(
         "End stream of video {video} ({total_bytes} bytes in {num_parts} parts) in {:?}",

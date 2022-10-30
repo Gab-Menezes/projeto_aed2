@@ -103,6 +103,6 @@ echo
 echo "Compression time: $compress_delta_time s"
 echo "Compression size: $compress_size bytes"
 echo "Compression throughput: $compress_throughput bytes/s"
-echo "Compression avg size: $compress_avg_size s"
+echo "Compression avg size: $compress_avg_size bytes"
 echo "Compression Ratio: $compress_ratio"
 echo

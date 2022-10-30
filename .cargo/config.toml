@@ -3,3 +3,11 @@ rustflags = ["--cfg", "tokio_unstable"]
 
 [profile.dev]
 opt-level = 0
+
+[profile.release-max]
+inherits = "release"
+rustflags = ["-C", "target-cpu=native", "-Z", "tune-cpu=native"]
+codegen-units = 1
+lto = "fat"
+panic = "abort"
+incremental = false

@@ -26,6 +26,10 @@ Right now the client will ask for a random video, but in the future this will ch
 * **Server**: `[RUST_LOG=<debug|trace>] cargo run [--release] --bin server -- -v=<folder path>`
 * **Client**: `[RUST_LOG=<debug|trace>] cargo run [--release] --bin client`
 
+# Generating plot
+1. `find ./subject_videos/ -type f -name "*.mp4" -exec ./gen_data.sh ./videos {} yuv 5 gzip 19 ./data \;`
+2. `gnuplot -e "graph_title='AVG Segment Size'" -e "filename='./data/compression_avg_segment_size_720p'" -e "pow=2" -e "y_label='MB'" -e "conversion_scale=1e+6" -e "output_filename='output.png'" plot_script.plg`
+
 # Documentation
 * Install Rust: https://www.rust-lang.org/tools/install
 * Rust std doc: https://doc.rust-lang.org/std/
