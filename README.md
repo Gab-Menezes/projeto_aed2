@@ -33,8 +33,8 @@ All of the collected data was generated with segment time of 5 seconds.
     * compression_ratio_<720|1080>p.dat
     * compression_time_<720|1080>p.dat
     * decompression_time_<720|1080>p.dat
-    * receive_time_<720|1080>p.dat
-    * useful_ratio_<720|1080>p.dat
+    * transmission_time_<720|1080>p.dat
+    * time_ratio_<720|1080>p.dat
 2. Run:
     * `find ./subject_videos/ -type f -name "*.mp4" -exec ./ingest.sh ./videos {} yuv 5 gzip 19 ./data \;`
     * `find ./subject_videos/ -type f -name "*.mp4" -exec ./ingest.sh ./videos {} yuv 5 xz 19 ./data \;`

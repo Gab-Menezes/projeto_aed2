@@ -47,7 +47,7 @@ fn main() -> io::Result<()> {
 
     let num_runs = if args.collect_data { 5 } else { 1 };
 
-    let mut total_receive_time = 0f64;
+    let mut total_trasmission_time = 0f64;
     let mut total_decompress_time = 0f64;
     let mut total_recv_decomp_time = 0f64;
     for _ in 0..num_runs {
@@ -62,7 +62,7 @@ fn main() -> io::Result<()> {
         for (part, num_chunks) in &parts {
             //request the part
             tracing::debug!("Begin stream of part {part} from video {video}");
-            let begin_receive_time = std::time::Instant::now();
+            let begin_transmission_time = std::time::Instant::now();
 
             let msg = bincode::options()
                 .serialize(&Message::GetVideoPart((video.clone(), part.clone())))
@@ -84,8 +84,8 @@ fn main() -> io::Result<()> {
                 tracing::trace!("Chunk({chunk_idx}/{num_chunks}) Sending ack");
                 sock.send_to("ack".as_bytes(), addr).unwrap();
             }
-            total_receive_time += begin_receive_time.elapsed().as_secs_f64();
-            tracing::debug!("End stream of part {part} from video {video} ({total_part_bytes} bytes in {num_chunks} chunks) in {:?}", begin_receive_time.elapsed());
+            total_trasmission_time += begin_transmission_time.elapsed().as_secs_f64();
+            tracing::debug!("End stream of part {part} from video {video} ({total_part_bytes} bytes in {num_chunks} chunks) in {:?}", begin_transmission_time.elapsed());
 
             //decompress the received part
             let begin_decompress_time = std::time::Instant::now();
@@ -124,10 +124,10 @@ fn main() -> io::Result<()> {
     if args.collect_data {
         //calculate the data
         let avg_decompress_time = total_decompress_time / num_runs as f64;
-        let avg_receive_time = total_receive_time / num_runs as f64;
+        let avg_transmission_time = total_trasmission_time / num_runs as f64;
 
         let avg_recv_decomp_time = total_recv_decomp_time / num_runs as f64;
-        let useful_ratio = avg_recv_decomp_time / video_info.duration;
+        let time_ratio = avg_recv_decomp_time / video_info.duration;
 
         //get the folder, extension, generate the replace string
         let folder = args.data_folder.unwrap();
@@ -148,12 +148,12 @@ fn main() -> io::Result<()> {
                 avg_decompress_time,
             ),
             (
-                format!("receive_time_{}p.dat", video_info.height),
-                avg_receive_time,
+                format!("transmission_time_{}p.dat", video_info.height),
+                avg_transmission_time,
             ),
             (
-                format!("useful_ratio_{}p.dat", video_info.height),
-                useful_ratio,
+                format!("time_ratio_{}p.dat", video_info.height),
+                time_ratio,
             ),
         ];
         
