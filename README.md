@@ -27,6 +27,7 @@ Right now the client will ask for a random video, but in the future this will ch
 * **Client**: `[RUST_LOG=<debug|trace>] cargo run [--release|--release-max] --bin client -- --video-name=<video name> [--collect-data --data-folder=<data folder>]`
 
 # Generating plot
+All of the collected data was generated with segment time of 5 seconds.
 1. Generate files following the [exmaple](data/format.example) file:
     * compression_avg_segment_size_<720|1080>p.dat
     * compression_ratio_<720|1080>p.dat
