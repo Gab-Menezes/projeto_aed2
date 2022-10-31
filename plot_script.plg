@@ -22,12 +22,11 @@ set tics nomirror
 
 set key box
 set key width 1 height 1
-
-set title graph_title
+set title sprintf("%s\n{/*0.7 %s}", graph_title, subtitle)
 
 x_off = .19
 y_off = scale/50.0
-plot filename using ($2/conversion_scale):xtic(1) title "GZ" linecolor rgb red, \
+plot filename using ($2/conversion_scale):xtic(1) title "GZIP" linecolor rgb red, \
     ""  using ($0 - x_off):(($2/conversion_scale) + y_off):(sprintf("%3.2f",$2/conversion_scale)) with labels notitle, \
     filename using ($3/conversion_scale) title "XZ" linecolor rgb blue, \
     ""  using ($0 + x_off):(($3/conversion_scale) + y_off):(sprintf("%3.2f",$3/conversion_scale)) with labels notitle

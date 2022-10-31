@@ -22,9 +22,11 @@ pub enum Compression {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VideoInfo {
+    pub original_video_name: String,
     pub width: u32,
     pub height: u32,
     pub fps: f32,
+    pub duration: f64,
     pub compression: Compression,
 }
 
