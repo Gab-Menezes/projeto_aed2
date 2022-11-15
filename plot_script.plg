@@ -22,7 +22,8 @@ set tics nomirror
 
 set key box
 set key width 1 height 1
-set title sprintf("%s\n{/*0.7 %s}", graph_title, subtitle)
+# set title sprintf("%s\n{/*0.7 %s}", graph_title, subtitle)
+set title graph_title
 
 x_off = .19
 y_off = scale/50.0
